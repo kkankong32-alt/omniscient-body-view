@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="초등과학 5-1 4단원 「우리 몸의 구조와 기능」 인터랙티브 인체 시뮬레이터 — 기관이 아니라 연결을 탐구합니다." />
+  <title>전지적 몸속시점 — 우리 몸의 구조와 기능</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233fe0c5' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='12' cy='4.3' r='2.1'/%3E%3Cpath d='M12 6.8c-3 0-4.6 1.6-4.6 4.4v3.3c0 .9.5 1.5 1.3 1.7l.6 5.3h5.4l.6-5.3c.8-.2 1.3-.8 1.3-1.7v-3.3c0-2.8-1.6-4.4-4.6-4.4z'/%3E%3C/svg%3E" />
+  <script type="module" crossorigin src="./assets/main-DoCI0jdw.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/teacherPanel-QgLh9iSd.js">
+  <link rel="stylesheet" crossorigin href="./assets/teacherPanel-COVnQuJ0.css">
+</head>
+<body>
+  <div id="app">
+
+    <!-- ===== 상단 바: 학습 방식 · 핵심 도구만 ===== -->
+    <header id="topbar">
+      <div class="brand">
+        <span class="brand-mark" data-icon="logo" data-icon-size="30"></span>
+        <div class="brand-text">
+          <h1>전지적 몸속시점</h1>
+          <p class="subtitle">기관이 아니라 <em>연결</em>로 보는 우리 몸</p>
+        </div>
+      </div>
+
+      <nav id="mode-tabs" class="mode-tabs" role="tablist" aria-label="학습 방식 선택">
+        <button class="mode-tab active" data-mode="learn" role="tab" title="학습: 교과서 순서대로 보고 대표 체험 시작" aria-selected="true"><span data-icon="bookOpen"></span><span>학습</span></button>
+        <button class="mode-tab" data-mode="explore" role="tab" title="탐구: 원하는 기관·과정을 직접 골라 관찰" aria-selected="false"><span data-icon="compass"></span><span>탐구</span></button>
+        <button class="mode-tab" data-mode="mission" role="tab" title="미션: 관찰 목표 해결" aria-selected="false"><span data-icon="target"></span><span>미션</span></button>
+      </nav>
+
+      <div class="top-actions">
+        <button id="btn-search" class="text-btn" title="기관 이름으로 찾기 ( / 키)" aria-expanded="false" aria-controls="search-pop"><span data-icon="search"></span><span>기관 찾기</span></button>
+        <button id="btn-graphics" class="text-btn" title="설명을 숨기고 3D 그래픽만 크게 보기 (Esc로 돌아오기)"><span data-icon="maximize"></span><span>그래픽만 보기</span></button>
+        <button id="btn-panel" class="icon-btn" title="설명 패널 열기·닫기" aria-label="설명 패널 열기·닫기" aria-pressed="true" data-icon="panelRight"></button>
+        <button id="btn-help" class="icon-btn" title="사용 방법" aria-label="사용 방법" data-icon="help"></button>
+        <button id="btn-drawer" class="icon-btn" title="보기 설정 · 교사용 도구" aria-label="보기 설정과 교사용 도구" data-icon="settings"></button>
+      </div>
+      <div id="search-pop" class="search-pop hidden" role="dialog" aria-label="기관 찾기">
+        <label class="search-field"><span data-icon="search" data-icon-size="20"></span><input id="search-input" type="search" placeholder="기관 이름 (예: 폐, 심장, 위, 콩팥)" autocomplete="off" aria-label="기관 이름" /></label>
+        <ul id="search-results" class="search-results"></ul>
+      </div>
+    </header>
+
+    <!-- ===== 본문 ===== -->
+    <div id="workspace">
+
+      <!-- 왼쪽: 계통 선택 -->
+      <aside id="system-rail" aria-label="몸의 계통 선택">
+        <button class="system-btn" data-system="skeletal_muscular" aria-label="뼈와 근육">
+          <span class="system-icon" data-icon="bone" data-icon-size="30"></span><span class="system-label">뼈와 근육</span>
+        </button>
+        <button class="system-btn" data-system="digestive" aria-label="소화기관">
+          <span class="system-icon" data-icon="stomach" data-icon-size="30"></span><span class="system-label">소화</span>
+        </button>
+        <button class="system-btn" data-system="circulatory" aria-label="순환기관">
+          <span class="system-icon" data-icon="heartPulse" data-icon-size="30"></span><span class="system-label">순환</span>
+        </button>
+        <button class="system-btn" data-system="respiratory" aria-label="호흡기관">
+          <span class="system-icon" data-icon="lungs" data-icon-size="30"></span><span class="system-label">호흡</span>
+        </button>
+        <button class="system-btn" data-system="excretory" aria-label="배설기관">
+          <span class="system-icon" data-icon="kidneys" data-icon-size="30"></span><span class="system-label">배설</span>
+        </button>
+      </aside>
+
+      <!-- 중앙: DUAL VIEW 무대 (3D가 화면의 주인공 — 긴 설명은 여기에 띄우지 않는다) -->
+      <main id="stage" data-choreo="hero">
+        <canvas id="body-canvas"></canvas>
+
+        <div id="views" style="--split: 0%;">
+          <section id="view-context" class="view view-context" aria-label="전신 지도: 어디에서 일어나고 있나요?">
+            <header class="view-tag">
+              <span data-icon="body" data-icon-size="20"></span>
+              <span class="view-q">어디에서?</span>
+              <strong class="tag-sub">전신 지도</strong>
+            </header>
+            <div class="route-legend" aria-hidden="true">
+              <span class="lg lg-done">지나온 길</span>
+              <span class="lg lg-now">지금</span>
+              <span class="lg lg-next">다음</span>
+            </div>
+          </section>
+
+          <div id="view-divider" role="separator" aria-orientation="vertical" aria-label="화면 나누기 조절(좌우 화살표)" tabindex="0"></div>
+
+          <section id="view-detail" class="view view-detail" aria-label="집중 시점: 지금 무엇이 일어나고 있나요?">
+            <header class="view-tag view-tag-detail">
+              <span id="view-chip" class="view-chip">몸 전체</span>
+              <span id="activity-badge" class="activity-badge">평상시</span>
+            </header>
+
+            <div class="view-tools">
+              <button id="btn-home" class="text-btn small hidden" title="몸 전체 보기로 돌아가기"><span data-icon="body"></span><span>몸 전체로</span></button>
+              <button id="btn-reset-view" class="icon-btn small" title="시점 초기화" aria-label="시점 초기화" data-icon="focus"></button>
+              <button class="icon-btn small" data-split="hero" title="집중 시점만 크게" aria-label="집중 시점만 크게" data-icon="maximize"></button>
+              <button class="icon-btn small" data-split="dual" title="전신 지도와 함께 보기" aria-label="전신 지도와 함께 보기" data-icon="split"></button>
+            </div>
+
+            <!-- 고정 콜아웃: 글씨는 화면의 정해진 자리에 가만히 있고, 가는 선만 3D의 그 자리를 가리킨다(글씨가 개체를 따라 흔들리지 않게) -->
+            <svg id="callout-svg" class="callout-svg" aria-hidden="true"></svg>
+            <div id="event-chip" class="event-chip hidden" aria-hidden="true"><span class="ev-dot"></span><span id="event-text"></span></div>
+            <div id="co-rich" class="blood-callout rich hidden"><span class="bc-swatch"></span><span><strong>산소가 많은 혈액</strong><small>밝은 빨강 · 반짝임 · 심장 → 온몸</small></span></div>
+            <div id="co-poor" class="blood-callout poor hidden"><span class="bc-swatch"></span><span><strong>산소가 적은 혈액</strong><small>어두운 빨강 · 무광 · 온몸 → 심장</small></span></div>
+            <div id="pump-indicator" class="pump-indicator hidden" role="status"><span class="pi-dot"></span><span id="pump-text"></span></div>
+
+            <div id="magnify-inset" class="magnify-inset hidden" aria-label="교육용 확대 표현">
+              <canvas id="magnify-canvas" width="480" height="480"></canvas>
+              <p class="magnify-label"><span id="magnify-title">확대해서 보기</span><small>교육용 확대 표현</small></p>
+            </div>
+
+            <!-- 상황 캡션(몸의 상황을 고른 뒤, 몸속 이동이 아닐 때) -->
+            <div id="scenario-caption" class="scenario-caption hidden">
+              <p id="scenario-text"></p>
+            </div>
+          </section>
+        </div>
+
+        <!-- 자막 도크: 3D 위에 띄우지 않고 무대 아래 전용 구역에 둔다(3D 장면 > 짧은 설명 > 최소 조작).
+             views/dualView 렌더 영역은 이 도크 높이만큼 위로 줄어든다(ui/flowControls.js가 --dock-h 갱신). -->
+        <div id="flow-dock" class="flow-dock hidden">
+          <div class="dock-nav" role="navigation" aria-label="체험 이동">
+            <span id="exp-mission" class="exp-mission hidden"></span>
+            <span id="exp-current" class="exp-current"></span>
+            <div id="flow-breadcrumb" class="route-steps"></div>
+            <button id="exp-list" class="btn btn-ghost small-btn"><span data-icon="layers" data-icon-size="16"></span>체험 목록</button>
+            <button id="exp-next" class="btn btn-ghost small-btn"></button>
+            <button id="exp-end" class="btn btn-ghost small-btn"><span data-icon="body" data-icon-size="16"></span>끝내기</button>
+          </div>
+          <div id="exp-done" class="exp-done hidden">
+            <p id="exp-done-text"></p>
+            <div class="exp-done-actions">
+              <button id="exp-done-next" class="btn btn-accent"></button>
+              <button id="exp-done-again" class="btn"><span data-icon="replay"></span>다시 보기</button>
+              <button id="exp-done-list" class="btn btn-ghost"><span data-icon="layers"></span>체험 목록</button>
+            </div>
+          </div>
+          <div id="transition-banner" class="transition-banner hidden">
+            <p id="transition-text"></p>
+            <div class="transition-actions">
+              <button id="transition-accept" class="btn btn-accent">따라가 볼까요?</button>
+              <button id="transition-dismiss" class="btn btn-ghost">계속 보기</button>
+            </div>
+          </div>
+
+          <!-- 캡션 바: "지금 일어나는 일" 한 줄 + 경로 진행 + 재생 컨트롤 -->
+          <div id="flow-controls" class="caption-bar hidden">
+            <div class="caption-main">
+              <p class="caption-kicker"><span id="flow-journey-progress" class="caption-journey"></span><span id="now-kicker"></span><span id="now-text" class="now-text"></span></p>
+              <p id="flow-message" class="caption-text"></p>
+              <p id="flow-hint" class="caption-hint hidden" role="status"></p>
+            </div>
+            <div class="caption-buttons">
+              <button id="flow-restart" class="icon-btn" title="처음부터" aria-label="처음부터" data-icon="restart"></button>
+              <button id="flow-step-back" class="icon-btn" title="이전 단계" aria-label="이전 단계" data-icon="prev"></button>
+              <button id="flow-play-pause" class="play-btn" title="재생" aria-label="재생 또는 일시정지"></button>
+              <button id="flow-step-fwd" class="icon-btn" title="다음 단계" aria-label="다음 단계" data-icon="next"></button>
+              <select id="flow-speed" title="관찰 속도" aria-label="관찰 속도">
+                <option value="slow">느리게</option>
+                <option value="normal" selected>기본</option>
+                <option value="fast">빠르게</option>
+              </select>
+              <div class="seg-toggle" role="group" aria-label="카메라 보기 방식">
+                <button id="flow-cam-follow" class="seg-btn" aria-pressed="true" title="카메라가 지금 이동하는 물질을 가까이 따라가요"><span data-icon="crosshair" data-icon-size="18"></span><span class="seg-label">따라가기</span></button>
+                <button id="flow-cam-overview" class="seg-btn" aria-pressed="false" title="이 여행의 길 전체를 한 화면에서 봐요(지나온 길·지금·다음 표시)"><span data-icon="route" data-icon-size="18"></span><span class="seg-label">길 전체 보기</span></button>
+              </div>
+              <button id="flow-record" class="icon-btn" title="지금 장면 기록하기" aria-label="지금 장면 기록하기" data-icon="notebook"></button>
+              <button id="flow-more" class="icon-btn" title="지나온 길·자세한 설명 펼치기" aria-label="자막 펼치기" aria-expanded="false" data-icon="layers"></button>
+            </div>
+          </div>
+        </div>
+
+        <button id="btn-exit-graphics" class="text-btn floating hidden"><span data-icon="panelRight"></span><span>설명 보기</span></button>
+
+        <div id="loading" class="loading-screen">
+          <div class="loading-inner">
+            <span class="loading-mark" data-icon="logo" data-icon-size="56"></span>
+            <p class="loading-title">전지적 몸속시점</p>
+            <p id="loading-text" class="loading-text">우리 몸 2,234개 구조를 불러오고 있어요</p>
+            <div class="loading-bar"><span id="loading-fill"></span></div>
+          </div>
+        </div>
+      </main>
+
+      <!-- 오른쪽: 하나로 합친 설명 패널(Unified Context Panel) -->
+      <aside id="side-panel" class="side-panel" aria-label="설명 패널">
+        <div class="side-head">
+          <span id="side-title">학습</span>
+          <button id="side-close" class="icon-btn small" aria-label="설명 패널 접기" title="설명 패널 접기" data-icon="close"></button>
+        </div>
+        <div class="side-scroll">
+          <!-- 선택한 기관 -->
+          <section id="organ-card" class="panel-organ hidden" aria-label="기관 정보">
+            <p class="card-kicker" id="organ-card-system"></p>
+            <h2 id="organ-card-title">기관 이름</h2>
+            <div class="organ-card-section"><h3>어디에 있나요?</h3><p id="organ-card-where"></p></div>
+            <div class="organ-card-section"><h3>어떤 모습인가요?</h3><p id="organ-card-look"></p></div>
+            <div class="organ-card-section"><h3>무슨 일을 하나요?</h3><p id="organ-card-role"></p></div>
+            <div id="organ-legend" class="legend-row hidden"></div>
+            <details class="organ-card-more"><summary>더 알아보기</summary><p id="organ-card-extra"></p></details>
+          </section>
+
+          <!-- 몸속 이동 중 관찰 포인트 -->
+          <section id="panel-flow" class="panel-flow hidden" aria-label="관찰 포인트">
+            <p class="card-kicker">관찰 포인트</p>
+            <h2 id="panel-flow-title"></h2>
+            <p id="panel-flow-note" class="panel-flow-note"></p>
+            <div id="panel-flow-legend" class="flow-legend"></div>
+          </section>
+
+          <!-- 지금 할 수 있는 대표 행동 하나 -->
+          <div id="panel-primary" class="panel-primary"></div>
+
+          <!-- 학습/탐구/미션 내용 -->
+          <button id="side-body-toggle" class="side-body-toggle hidden"></button>
+          <div id="side-body"></div>
+        </div>
+        <div class="side-foot">
+          <button id="btn-record" class="btn wide"><span data-icon="notebook"></span>지금 장면 기록하기</button>
+        </div>
+      </aside>
+
+      <!-- 팔 움직임 실험 — 왼쪽 작은 영역: 몸에서의 위치, 큰 영역: 팔꿈치·뼈·근육 -->
+      <section id="arm-experiment" class="arm-experiment hidden" aria-label="팔 움직임 실험">
+        <div class="arm-exp-head">
+          <h2><span data-icon="hand" data-icon-size="28"></span>팔은 어떻게 움직일까요?</h2>
+          <div class="arm-exp-nav">
+            <span id="arm-exp-mission" class="exp-mission hidden"></span>
+            <button id="arm-exp-list" class="btn btn-ghost"><span data-icon="layers"></span>체험 목록</button>
+            <button id="arm-exp-next" class="btn btn-ghost"></button>
+            <button id="arm-record" class="btn btn-ghost"><span data-icon="notebook"></span>장면 기록하기</button>
+            <button id="arm-exp-back" class="btn btn-accent"><span data-icon="body"></span>몸 전체로 돌아가기</button>
+          </div>
+        </div>
+        <div class="arm-exp-body">
+          <div class="arm-exp-stage">
+            <canvas id="arm-exp-canvas"></canvas>
+            <span class="arm-exp-tag arm-tag-context"><span data-icon="body" data-icon-size="18"></span>어디에서? 몸에서 팔의 위치</span>
+            <span class="arm-exp-tag arm-tag-detail"><span data-icon="hand" data-icon-size="18"></span>무엇이? 팔꿈치 · 뼈 · 근육</span>
+            <svg class="arm-lead-svg" aria-hidden="true">
+              <line id="arm-lead-inner" class="inner"></line><circle id="arm-dot-inner" class="inner" r="4"></circle>
+              <line id="arm-lead-outer" class="outer"></line><circle id="arm-dot-outer" class="outer" r="4"></circle>
+            </svg>
+            <span id="arm-label-inner" class="arm-mlabel inner"></span>
+            <span id="arm-label-outer" class="arm-mlabel outer"></span>
+            <p id="arm-ghost-note" class="arm-ghost-note hidden">흐린 윤곽 = 팔을 폈을 때의 근육 모양</p>
+          </div>
+          <aside class="arm-exp-observe">
+            <div id="arm-record-holder"></div>
+            <h3>관찰 카드</h3>
+            <div class="arm-exp-row"><span class="arm-exp-dot inner"></span><span>팔 안쪽 근육</span><strong id="arm-exp-inner-state">관찰 중</strong></div>
+            <div class="arm-exp-row"><span class="arm-exp-dot outer"></span><span>팔 바깥쪽 근육</span><strong id="arm-exp-outer-state">관찰 중</strong></div>
+            <div id="arm-compare" class="arm-compare" aria-label="근육 길이 비교">
+              <p class="cmp-title">근육 길이 비교 <small>흰 눈금 = 팔을 폈을 때 길이</small></p>
+              <div class="cmp-row inner"><span class="cmp-name">팔 안쪽 근육</span><span class="cmp-track"><i class="cmp-bar" id="cmp-inner-bar"></i><i class="cmp-ref"></i></span><strong id="cmp-inner-val" class="cmp-val"></strong></div>
+              <div class="cmp-row outer"><span class="cmp-name">팔 바깥쪽 근육</span><span class="cmp-track"><i class="cmp-bar" id="cmp-outer-bar"></i><i class="cmp-ref"></i></span><strong id="cmp-outer-val" class="cmp-val"></strong></div>
+            </div>
+            <div id="arm-mission-done" class="arm-mission-done hidden"></div>
+            <div id="arm-exp-question" class="arm-exp-question hidden"></div>
+          </aside>
+        </div>
+        <div class="arm-exp-controls">
+          <p class="arm-exp-hint"><span data-icon="hand"></span>슬라이더를 움직이거나 아래팔을 직접 끌어 보세요</p>
+          <div class="arm-slider-row">
+            <button id="arm-snap-0" class="btn btn-ghost arm-snap" title="팔을 쭉 편 상태로">편 팔</button>
+            <input id="arm-exp-slider" type="range" min="0" max="100" value="0" aria-label="팔 굽힘 정도" />
+            <button id="arm-snap-1" class="btn btn-ghost arm-snap" title="팔을 끝까지 굽힌 상태로">굽힌 팔</button>
+          </div>
+          <div class="arm-tools">
+            <button id="arm-demo" class="btn btn-accent"><span data-icon="replay"></span>천천히 굽혔다 펴 보기</button>
+            <label class="toggle-row arm-ghost-toggle"><input type="checkbox" id="arm-ghost" checked /><span>편 팔 윤곽 겹쳐 보기(비교)</span></label>
+          </div>
+          <p class="arm-exp-note">BodyParts3D의 실제 인체 구조(뼈와 근육)를 바탕으로, 움직임의 원리를 쉽게 관찰할 수 있도록 표현했습니다.</p>
+        </div>
+      </section>
+    </div>
+
+    <!-- ===== 하단 독: 몸의 상황 + 대표 체험(항상 보임) ===== -->
+    <footer id="dock">
+      <div id="activity-buttons" class="dock-group" role="group" aria-label="몸의 상황">
+        <span class="dock-label">몸의 상황</span>
+        <button class="dock-btn active" data-activity="rest"><span data-icon="sofa"></span>평상시</button>
+        <button class="dock-btn" data-activity="eating"><span data-icon="utensils"></span>식사할 때</button>
+        <button class="dock-btn" data-activity="sleeping"><span data-icon="moon"></span>잠잘 때</button>
+        <button class="dock-btn" data-activity="urinating"><span data-icon="toilet"></span>소변 볼 때</button>
+        <button class="dock-btn" data-activity="exercise"><span data-icon="footprints"></span>운동할 때</button>
+      </div>
+      <div id="tracer-buttons" class="dock-group" role="group" aria-label="몸속 체험">
+        <span class="dock-label">체험하기</span>
+        <button class="dock-btn signature" data-action="startFoodJourney" data-tracer="food"><span data-icon="utensils"></span>한입의 여행</button>
+        <button class="dock-btn" data-action="startBreath" data-tracer="oxygen"><span data-icon="lungs"></span>호흡</button>
+        <button class="dock-btn" data-action="startHeartPump"><span data-icon="heartPulse"></span>심장</button>
+        <button class="dock-btn" data-action="startUrineJourney" data-tracer="urine"><span data-icon="droplet"></span>오줌의 여행</button>
+        <button class="dock-btn" data-action="openArmExperiment"><span data-icon="hand"></span>팔 실험</button>
+        <button class="dock-btn accent" data-action="startBodyConnection" id="journey-start"><span data-icon="route"></span>몸속 연결 여행</button>
+        <details class="dock-more">
+          <summary class="dock-btn"><span data-icon="layers"></span>더 보기</summary>
+          <div class="dock-more-menu">
+            <button class="dock-btn" data-action="startNutrientDelivery" data-tracer="nutrientDelivery"><span data-icon="nutrient"></span>영양소 운반</button>
+            <button class="dock-btn" data-action="startOxygenDelivery" data-tracer="oxygenDelivery"><span data-icon="o2"></span>산소 운반</button>
+            <button class="dock-btn" data-action="startExhale" data-tracer="carbonDioxideReturn"><span data-icon="co2"></span>이산화 탄소 내보내기</button>
+            <button class="dock-btn" data-action="startWaste" data-tracer="wasteRenal"><span data-icon="waste"></span>노폐물 운반</button>
+          </div>
+        </details>
+        <button class="dock-btn ghost hidden" id="tracer-stop"><span data-icon="close"></span>그만 보기</button>
+      </div>
+    </footer>
+
+    <!-- ===== 보기 설정 · 교사용 도구 서랍 ===== -->
+    <div id="settings-drawer" class="drawer hidden" aria-label="보기 설정">
+      <div class="drawer-head">
+        <h2><span data-icon="settings"></span>보기 설정</h2>
+        <button id="drawer-close" class="icon-btn small" aria-label="닫기" data-icon="close"></button>
+      </div>
+      <div id="drawer-body"></div>
+      <button id="drawer-reset" class="btn wide"><span data-icon="undo"></span>기본 보기로 되돌리기</button>
+      <div class="drawer-section">
+        <h3>그래픽 품질</h3>
+        <select id="quality-select">
+          <option value="low">가볍게 (오래된 컴퓨터)</option>
+          <option value="medium" selected>균형</option>
+          <option value="high">최고 화질</option>
+        </select>
+      </div>
+      <div class="drawer-section">
+        <h3>수업 도구</h3>
+        <button id="btn-present" class="btn wide"><span data-icon="present"></span>발표 모드 (글자 크게)</button>
+        <button id="btn-teacher" class="btn wide"><span data-icon="teacher"></span>교사용 패널 열기</button>
+        <button id="btn-result" class="btn wide"><span data-icon="notebook"></span>몸속 탐구 결과 저장</button>
+      </div>
+      <div class="drawer-section whale-section">
+        <h3>수업 공유</h3>
+        <button id="btn-whale-link" class="btn wide"><span data-icon="link"></span>웨일 클래스용 링크 복사</button>
+        <button id="btn-whale-open" class="btn btn-ghost wide"><span data-icon="share"></span>웨일 클래스 열기</button>
+      </div>
+      <div id="teamboard-settings-slot"></div>
+      <div class="drawer-section">
+        <button id="btn-info" class="btn btn-ghost wide"><span data-icon="info"></span>자료 정보 · 출처</button>
+      </div>
+    </div>
+
+    <!-- ===== 모달 ===== -->
+    <div id="info-modal" class="modal hidden" aria-label="안내" role="dialog">
+      <div class="modal-inner">
+        <button id="info-close" class="icon-btn small card-close" aria-label="닫기" data-icon="close"></button>
+        <h2>자료 정보 및 출처</h2>
+        <p>2022 개정 초등과학 5-1 4단원 「우리 몸의 구조와 기능」 교과서·실험관찰을 1차 근거로 만들었습니다.</p>
+        <p>인체 모형: <strong>BodyParts3D</strong>, © The Database Center for Life Science licensed under CC Attribution 4.0 International. 2,234개 원본 메시 전체를 사용합니다(성인 남성 기준 모형이며, 실제 사람마다 크기와 모양이 조금씩 달라요). 브라우저용 가공 데이터와 렌더링 기법은 Human Atlas(MIT License)를 참고·재구현했습니다. 3D 엔진: three.js(MIT). 아이콘: Lucide(ISC). 자세한 내용은 <code>THIRD_PARTY_NOTICES.md</code>.</p>
+        <p>몸속의 확대 그림과 물질(음식물 조각, 영양소, 산소, 이산화 탄소, 노폐물, 오줌)의 모양은 이해를 돕기 위한 교육용 표현입니다.</p>
+        <p><strong>개인정보</strong>: 로그인이 없고 학생 이름·학번을 수집하지 않습니다. 기록은 이 기기의 브라우저에만 저장됩니다. 이 프로그램은 의료기기가 아니며 건강 상태를 진단하지 않습니다.</p>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>
